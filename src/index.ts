@@ -14,6 +14,7 @@ const s3 = new S3({
   secretAccessKey: secretAccessKey,
 });
 
+const port = process.env.PORT ?? 3001;
 const app = express();
 
 // Serve static files from the 'assets' directory
@@ -56,6 +57,6 @@ app.get("/:id/{*splat}", async (req, res) => {
 //   console.log("Request handler app listening on port 3001!");
 // });
 
-app.listen(7860, "0.0.0.0", () => {
-  console.log(`Server running on http://0.0.0.0:7860`);
+app.listen(port as number, "0.0.0.0", () => {
+  console.log(`Server running on http://0.0.0.0:${port}`);
 });
