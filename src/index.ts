@@ -1,7 +1,8 @@
 import express from "express";
-import path from "path";
 import pkg from "aws-sdk";
 import mime from "mime-types";
+import "dotenv/config";
+
 const { S3 } = pkg;
 
 const endpoint = process.env.S3_ENDPOINT ?? "";
@@ -18,14 +19,18 @@ const app = express();
 // Serve static files from the 'assets' directory
 // app.use('/assets', express.static(path.join(process.cwd(), 'assets')));
 
-app.get("/{*splat}", async (req, res) => {
-  // id.100xdevs.com
-  const host = req.hostname;
+// app.get("/{*splat}", async (req, res) => {
+app.get("/:id/{*splat}", async (req, res) => {
+  // const host = req.params;
 
-  const id = host.split(".")[0];
-  //   const filePath = req.path;
-  //   console.log(req.path);
-  const filePath = req.path === "/" ? "/index.html" : req.path;
+  // const id = host.split(".")[0];
+  const { id } = req.params;
+  // const filePath = req.path;
+  console.log(req.path);
+  // const filePath = req.path === `/${id}/` ? "/index.html" : req.path;
+  const path = req.path.slice(id.length + 1);
+  const filePath = path === "/" ? "/index.html" : path;
+  console.log(filePath);
   console.log(`Fetching file for id: ${id}, path: ${filePath}`);
 
   const contents = await s3
@@ -47,6 +52,10 @@ app.get("/{*splat}", async (req, res) => {
 
   res.send(contents.Body);
 });
-app.listen(3001, () => {
-  console.log("Request handler app listening on port 3001!");
+// app.listen(3001, () => {
+//   console.log("Request handler app listening on port 3001!");
+// });
+
+app.listen(7860, "0.0.0.0", () => {
+  console.log(`Server running on http://0.0.0.0:7860`);
 });
