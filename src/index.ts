@@ -19,11 +19,11 @@ const app = express();
 
 // Serve static files from the 'assets' directory
 // app.use('/assets', express.static(path.join(process.cwd(), 'assets')));
-app.use((req, res, next) => {
-  res.setHeader("X-Frame-Options", "ALLOWALL"); // or "ALLOW-FROM <your-domain>"
-  res.setHeader("Content-Security-Policy", "frame-ancestors *");
-  next();
-});
+// app.use((req, res, next) => {
+//   res.setHeader("X-Frame-Options", "ALLOWALL"); // or "ALLOW-FROM <your-domain>"
+//   res.setHeader("Content-Security-Policy", "frame-ancestors *");
+//   next();
+// });
 // app.get("/{*splat}", async (req, res) => {
 app.get("/:id/{*splat}", async (req, res) => {
   // const host = req.params;
@@ -47,6 +47,18 @@ app.get("/:id/{*splat}", async (req, res) => {
 
   // Use mime-types to determine the correct content type
   const type = mime.lookup(filePath) || "application/octet-stream";
+  // ✅ Set headers here, before sending response
+  res.setHeader("Content-Type", type);
+
+  // (optional) allow iframe embedding
+  res.setHeader("X-Frame-Options", "ALLOWALL");
+
+  // (optional) relax CSP if you want dev builds to run
+  res.setHeader("Content-Security-Policy", [
+    "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:",
+    "frame-ancestors *",
+  ]);
+
   res.setHeader("Content-Type", type);
 
   res.send(contents.Body);
