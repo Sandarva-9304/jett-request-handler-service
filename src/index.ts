@@ -56,10 +56,8 @@ app.get("/:id/{*splat}", async (req, res) => {
   // (optional) relax CSP if you want dev builds to run
   res.setHeader("Content-Security-Policy", [
     "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:",
-    "frame-ancestors *",
+    " frame-ancestors *",
   ]);
-
-  res.setHeader("Content-Type", type);
 
   res.send(contents.Body);
 });
